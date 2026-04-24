@@ -229,6 +229,19 @@ spec:
                 nodePort: {{ .Values.global.envoy.envoyPorts.communicationsAppPort }}
                 port: {{ .Values.global.envoy.appPorts.communicationsAppPort }}
                 protocol: TCP
+{{ else if eq .Values.global.envoy.serviceType "LoadBalancer" }}
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: custom-proxy-config
+  namespace: envoy-gateway-system
+spec:
+  provider:
+    type: Kubernetes
+    kubernetes:
+      envoyService:
+        type: LoadBalancer
+        externalTrafficPolicy: Cluster
 {{ end }}                
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
