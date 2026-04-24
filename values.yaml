@@ -1,0 +1,26 @@
+# Envoy templating values
+global:
+  appName: "tracker-simulator-envoy"
+  networkHost: "10.0.0.16"
+  envoy:
+    host: "10.0.0.16"
+    envoyPorts:
+      trackerServerGoPort: 32016
+      trackerServerTlsGoPort: 30599
+      trackerServerQuicGoPort: 30389
+      trackerClientGoPort: 32531 
+      trackerServerPort: 31346
+      trackerServerGrpcPort: 30548
+      trackerClientPort: 32712
+      trackerAnalyticsPort: 30313
+      communicationsAppPort: 32326
+    appPorts:
+      trackerServerGoPort: 18098
+      trackerServerTlsGoPort: 8098
+      trackerServerQuicGoPort: 8444
+      trackerClientGoPort: 8099 
+      trackerServerPort: 8088
+      trackerServerGrpcPort: 9003
+      trackerClientPort: 8089
+      trackerAnalyticsPort: 5050
+      communicationsAppPort: 80
