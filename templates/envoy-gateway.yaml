@@ -27,21 +27,6 @@ spec:
   - name: tracker-grpc
     protocol: TCP
     port: {{ .Values.global.envoy.appPorts.trackerServerGrpcPort }}
-  - name: tracker-client-go
-    protocol: TCP
-    port: {{ .Values.global.envoy.appPorts.trackerClientGoPort }}
-  - name: tracker-server-go
-    protocol: TCP
-    port: {{ .Values.global.envoy.appPorts.trackerServerGoPort }}
-  - name: tracker-server-go-http3
-    protocol: UDP
-    port: {{ .Values.global.envoy.appPorts.trackerServerTlsGoPort }}
-  - name: tracker-server-go-quic
-    protocol: UDP
-    port: {{ .Values.global.envoy.appPorts.trackerServerQuicGoPort }}
-    allowedRoutes:
-      kinds:
-      - kind: UDPRoute
   - name: tracker-analytics
     protocol: TCP
     port: {{ .Values.global.envoy.appPorts.trackerAnalyticsPort }}
@@ -90,62 +75,6 @@ spec:
   - backendRefs:
     - name: tracker
       port: {{ .Values.global.envoy.appPorts.trackerServerGrpcPort }}
----
-apiVersion: gateway.networking.k8s.io/v1alpha2
-kind: TCPRoute
-metadata:
-  name: tracker-client-go-route
-  namespace: default
-spec:
-  parentRefs:
-  - name: bare-metal-gateway
-    sectionName: tracker-client-go
-  rules:
-  - backendRefs:
-    - name: trackerclient-go
-      port: {{ .Values.global.envoy.appPorts.trackerClientGoPort }}
----
-apiVersion: gateway.networking.k8s.io/v1alpha2
-kind: TCPRoute
-metadata:
-  name: tracker-server-go-route-http1
-  namespace: default
-spec:
-  parentRefs:
-  - name: bare-metal-gateway
-    sectionName: tracker-server-go
-  rules:
-  - backendRefs:
-    - name: trackerserver-go
-      port: {{ .Values.global.envoy.appPorts.trackerServerGoPort }}
----
-apiVersion: gateway.networking.k8s.io/v1alpha2
-kind: UDPRoute
-metadata:
-  name: tracker-server-go-route-http3
-  namespace: default
-spec:
-  parentRefs:
-  - name: bare-metal-gateway
-    sectionName: tracker-server-go-http3
-  rules:
-  - backendRefs:
-    - name: trackerserver-go
-      port: {{ .Values.global.envoy.appPorts.trackerServerTlsGoPort }}
----
-apiVersion: gateway.networking.k8s.io/v1alpha2
-kind: UDPRoute
-metadata:
-  name: tracker-server-go-route-quic
-  namespace: default
-spec:
-  parentRefs:
-  - name: bare-metal-gateway
-    sectionName: tracker-server-go-quic
-  rules:
-  - backendRefs:
-    - name: trackerserver-go
-      port: {{ .Values.global.envoy.appPorts.trackerServerQuicGoPort }}
 ---
 apiVersion: gateway.networking.k8s.io/v1alpha2
 kind: TCPRoute
@@ -205,22 +134,6 @@ spec:
                 nodePort: {{ .Values.global.envoy.envoyPorts.trackerServerGrpcPort }}
                 port: {{ .Values.global.envoy.appPorts.trackerServerGrpcPort }}
                 protocol: TCP
-              - name: tracker-client-go
-                nodePort: {{ .Values.global.envoy.envoyPorts.trackerClientGoPort }}
-                port: {{ .Values.global.envoy.appPorts.trackerClientGoPort }}
-                protocol: TCP
-              - name: tracker-server-go
-                nodePort: {{ .Values.global.envoy.envoyPorts.trackerServerGoPort }}
-                port: {{ .Values.global.envoy.appPorts.trackerServerGoPort }}
-                protocol: TCP
-              - name: tracker-server-go-http3
-                nodePort: {{ .Values.global.envoy.envoyPorts.trackerServerTlsGoPort }}
-                port: {{ .Values.global.envoy.appPorts.trackerServerTlsGoPort }}
-                protocol: UDP
-              - name: tracker-server-go-quic
-                nodePort: {{ .Values.global.envoy.envoyPorts.trackerServerQuicGoPort }}
-                port: {{ .Values.global.envoy.appPorts.trackerServerQuicGoPort }}
-                protocol: UDP
               - name: tracker-analytics
                 nodePort: {{ .Values.global.envoy.envoyPorts.trackerAnalyticsPort }}
                 port: {{ .Values.global.envoy.appPorts.trackerAnalyticsPort }}
@@ -268,30 +181,4 @@ spec:
     kind: TCPRoute
     name: tracker-route-9003
   loadBalancer:
-    type: LeastRequest
----
-apiVersion: gateway.envoyproxy.io/v1alpha1
-kind: BackendTrafficPolicy
-metadata:
-  name: tracker-server-go-least-connections-http3
-  namespace: default
-spec:
-  targetRef:
-    group: gateway.networking.k8s.io
-    kind: UDPRoute
-    name: tracker-server-go-route-http3
-  loadBalancer:
-    type: LeastRequest
----
-apiVersion: gateway.envoyproxy.io/v1alpha1
-kind: BackendTrafficPolicy
-metadata:
-  name: tracker-server-go-least-connections-quic
-  namespace: default
-spec:
-  targetRef:
-    group: gateway.networking.k8s.io
-    kind: UDPRoute
-    name: tracker-server-go-route-quic
-  loadBalancer:
-    type: LeastRequest        
+    type: LeastRequest  
