@@ -16,4 +16,4 @@ global:
       trackerServerGrpcPort: 9003
       trackerClientPort: 8089
       trackerAnalyticsPort: 5050
-      communicationsAppPort: 80
+      communicationsAppPort: 8080
