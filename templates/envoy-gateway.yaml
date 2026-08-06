@@ -169,6 +169,8 @@ spec:
     name: tracker-route
   loadBalancer:
     type: LeastRequest
+  circuitBreaker:
+    maxConnections: 10000
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: BackendTrafficPolicy
@@ -181,4 +183,6 @@ spec:
     kind: TCPRoute
     name: tracker-route-9003
   loadBalancer:
-    type: LeastRequest  
+    type: LeastRequest
+  circuitBreaker:
+    maxConnections: 10000
